@@ -5,7 +5,7 @@
 #include "BubbleSort.cpp"
 #include "InsertionSort.cpp"
 //#include "MergeSort.cpp"
-//#include "QuickSort.cpp"
+#include "QuickSort.cpp"
 
 using namespace std;
 
@@ -45,10 +45,21 @@ void SelectionSortThread(int num, SelectionSort * sel_sort, double * data) {
         //for (int i = 0; i < num; i++)
         //  std::cout << "Value of " << i << " element is " << data[i] << std::endl;
     
-        cout << "Ins Sorting time: "  << sel_sort->getSortTime() << "ms" << endl; 
+        cout << "Sel Sorting time: "  << sel_sort->getSortTime() << "ms" << endl; 
         //cout << "Number of iterations: " << sort->getIterationCount() << endl;
         //cout << "Number of transpositions: " << sort->getTranspositionCount() << endl;
 } 
+
+void QuickSortThread(int num, QuickSort * quick_sort, double * data){
+        int start, end, time;
+
+        data = quick_sort->AlgSort(data, num);
+        time = quick_sort->getSortTime();
+    
+        cout << "Quick Sorting time: "  << quick_sort->getSortTime() << "ms" << endl; 
+        //cout << "Number of iterations: " << sort->getIterationCount() << endl;
+        //cout << "Number of transpositions: " << sort->getTranspositionCount() << endl;
+}
 
 int main(){
     int num, start, end, time;
@@ -67,15 +78,18 @@ int main(){
     BubbleSort *bub_sort = new BubbleSort();
     InsertionSort *ins_sort = new InsertionSort();
     SelectionSort *sel_sort = new SelectionSort();
+    QuickSort *quick_sort = new QuickSort();
     
     ios_base::sync_with_stdio(false);
+    thread quickSort_thread(QuickSortThread, num, quick_sort, data);
+    quickSort_thread.join();
     thread func_thread(BubbleSortThread, num, bub_sort, data);
     func_thread.detach();
     thread func_thread2(InsertionSortThread, num, ins_sort, data);
     func_thread2.detach();
     thread func_thread3(SelectionSortThread, num, sel_sort, data);
     func_thread3.detach();
-
+    
     system("pause");
     return 0;
 }
