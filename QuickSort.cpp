@@ -2,9 +2,17 @@
 #include "RandomGenerator.h"
 #include <ctime>
 
-using namespace std;
+double * QuickSort::AlgSort(double data[], int num){
+    double *med_data = new double[num];
+    auto begin = std::chrono::steady_clock::now();
+    med_data = RekursSort(data, num);
+    auto end = std::chrono::steady_clock::now();
+    auto med_time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+    sort_time = med_time.count();
+    return med_data;
+}
 
-double * QuickSort::AlgSort(double data[], int num)
+double * QuickSort::RekursSort(double data[], int num)
 { 
   int const lenD = num;
   double pivot = 0;
@@ -26,8 +34,8 @@ double * QuickSort::AlgSort(double data[], int num)
         }
       }
     }
-    AlgSort(L,j);
-    AlgSort(R,k);
+    RekursSort(L,j);
+    RekursSort(R,k);
     for(int cnt=0;cnt<lenD;cnt++){
       if(cnt<j){
         data[cnt] = L[cnt];;

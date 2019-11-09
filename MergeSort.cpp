@@ -1,32 +1,45 @@
 #include "MergeSort.h"
+#include "RandomGenerator.h"
+#include <chrono>
 
 using namespace std;
 
-MergeSort::MergeSort(double m_array[], int m_size)
-{
-    SetSize(m_size);
-    SetArray(m_array);
-}
-
-void MergeSort::SetSize(int m_size)
-{
-    size = m_size;
-}
-
-void MergeSort::SetArray(double m_array[])
-{
-    array[size];
-    for (int i = 0; i < size; i++) {
-        array[i] = m_array[i];    
-    }
-}
-
-void MergeSort::AlgSort(double data[], int num)
+double * MergeSort::AlgSort(double data[], int num)
 {   
-    
+    double *med_data = new double[num];
+    auto begin = std::chrono::steady_clock::now();
+    med_data = mergeSort(data, num);
+    auto end = std::chrono::steady_clock::now();
+    auto med_time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+    sort_time = med_time.count();
+    return med_data;
 }
 
-void MergeSort::Merge(double merged[], int lenD, double L[], int lenL, double R[], int lenR){
+double * MergeSort::mergeSort(double data[], int lenD)
+{
+  if(lenD>1){
+    double *med_data = new double[lenD];
+    int middle = lenD/2;
+    int rem = lenD-middle;
+    double* L = new double[middle];
+    double* R = new double[rem];
+    for(int i=0;i<lenD;i++){
+      if(i<middle){
+        L[i] = data[i];
+      }
+      else{
+        R[i-middle] = data[i];
+      }
+    }
+    mergeSort(L,middle);
+    mergeSort(R,rem);
+    med_data = merge(data, lenD, L, middle, R, rem);
+    return med_data;
+  }
+  return data;
+}
+ 
+double * MergeSort::merge(double merged[], int lenD, double L[], int lenL, double R[], int lenR){
   int i = 0;
   int j = 0;
   while(i<lenL||j<lenR){
@@ -49,13 +62,7 @@ void MergeSort::Merge(double merged[], int lenD, double L[], int lenL, double R[
       j++;
     }
   }
+  return merged;
 }
 
-double * MergeSort::getSortArray() {
-    AlgSort(array ,size);
-    return array; 
-}
-
-int MergeSort::getIterationCount(){return iteration_count;}
-int MergeSort::getTranspositionCount(){return transposition_count;}
  
