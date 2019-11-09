@@ -1,6 +1,6 @@
 #include "InsertionSort.h"
 #include "RandomGenerator.h"
-#include <ctime>
+#include <chrono>
 
 using namespace std;
 
@@ -9,7 +9,7 @@ double * InsertionSort::AlgSort(double array[], int num)
     double *data = new double[num];
     for (int i=0; i<num; i++)
         data[i] = array[i];
-    int start_time =  clock(); // начальное время
+    auto begin = std::chrono::steady_clock::now();
     iteration_count = 0;
     transposition_count = 0;
     int lenD = num;
@@ -26,9 +26,9 @@ double * InsertionSort::AlgSort(double array[], int num)
             data[i+1]=key;
         }
     }
-  
-    int end_time = clock(); // конечное вре
-    sort_time = end_time - start_time; // искомое время
+    auto end = std::chrono::steady_clock::now();
+    auto med_time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+    sort_time = med_time.count();
     return data;
 }
  

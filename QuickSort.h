@@ -4,6 +4,8 @@
 
 class QuickSort : public BaseSort
 {
+protected:
+    double * RekursSort(double array[], int num);
 public:
     virtual double * AlgSort(double array[], int num);
 };
