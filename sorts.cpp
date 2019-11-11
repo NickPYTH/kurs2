@@ -3,6 +3,7 @@
 #include <mutex> 
 #include <chrono>
 #include <stdlib.h>
+#include <string.h>
 
 #include "SelectionSort.cpp"
 #include "BubbleSort.cpp"
@@ -11,6 +12,25 @@
 #include "QuickSort.cpp"
 
 std::mutex mu;
+
+string number_converter(long int m_number){
+        string number;
+        if (m_number < 1000000){
+                number = std::to_string(m_number);
+                number += " ns";
+        }
+        else if (m_number < 10000000){
+                m_number /= 1000000;
+                number = std::to_string(m_number);
+                number += " ms";
+        }
+        else {
+                m_number/=10000000;
+                number = std::to_string(m_number);
+                number += " ms";
+        }
+        return number;
+}
 
 void BubbleSortThread(int num, BubbleSort * bub_sort, double * data) { 
         int start, end, time;
@@ -171,10 +191,11 @@ int main(){
                         case 1:{
                                 system("cls");
                                 char choise_c;
+                                string time_str;
                                 BubbleSort *bub_sort = new BubbleSort();
                                 data = bub_sort->AlgSort(data, num);
-                                time = bub_sort->getSortTime();
-                                std::cout << "Bubble sorting time:   "  << bub_sort->getSortTime() << " ns\n"; 
+                                time_str = number_converter(bub_sort->getSortTime());
+                                std::cout << "Bubble sorting time:   "  << time_str << " ns\n"; 
                                 std::cout << "Number of iterations: " << bub_sort->getIterationCount() << "\n";
                                 std::cout << "Number of transpositions: " << bub_sort->getTranspositionCount() << "\n";
                                 std::cout << "Do u want see array after sorting?(y/n): ";
@@ -285,7 +306,7 @@ int main(){
                                 mergeSort_thread.detach();
                                 thread quickSort_thread(QuickSortThread, num, quick_sort, data);
                                 quickSort_thread.detach();
-                                system("pause");
+                                getchar();getchar();
                                 system("cls");
                                 data_name = "empty now :)";
                                 break;

@@ -24,10 +24,13 @@ double * MergeSort::mergeSort(double data[], int lenD)
     double* L = new double[middle];
     double* R = new double[rem];
     for(int i=0;i<lenD;i++){
+      iteration_count+=1;
       if(i<middle){
+        transposition_count+=1;
         L[i] = data[i];
       }
       else{
+        transposition_count+=1;
         R[i-middle] = data[i];
       }
     }
@@ -43,21 +46,26 @@ double * MergeSort::merge(double merged[], int lenD, double L[], int lenL, doubl
   int i = 0;
   int j = 0;
   while(i<lenL||j<lenR){
+    iteration_count+=1;
     if (i<lenL & j<lenR){
       if(L[i]<=R[j]){
+        transposition_count+=1;
         merged[i+j] = L[i];
         i++;
       }
       else{
+        transposition_count+=1;
         merged[i+j] = R[j];
         j++;
       }
     }
     else if(i<lenL){
+      transposition_count+=1;
       merged[i+j] = L[i];
       i++;
     }
     else if(j<lenR){
+      transposition_count+=1;
       merged[i+j] = R[j];
       j++;
     }

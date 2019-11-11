@@ -1,7 +1,7 @@
 #include "BaseSort.h"
 //array = (double *)malloc(size * sizeof(double));
 
-int BaseSort::getSortTime(){
+long int BaseSort::getSortTime(){
     return sort_time;
 }
 
