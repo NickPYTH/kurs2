@@ -2,6 +2,7 @@
 #include "RandomGenerator.h"
 #include "RandomGenerator.cpp"
 #include <chrono>
+#include <fstream>
 
 using namespace std;
 
@@ -32,6 +33,10 @@ double * BubbleSort::AlgSort(double array[], int num)
     auto end = std::chrono::steady_clock::now();
     auto med_time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
     sort_time = med_time.count();
+
+    ofstream f("txtAfterSorting/BubbleSort.txt");
+    for(int i = 0; i < num; i++)
+            f << data[i] << "\n";
     return data;
 }
 

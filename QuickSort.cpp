@@ -57,6 +57,9 @@ double * QuickSort::RekursSort(double data[], int num)
     }
   }
   iteration_count+=1;
+  ofstream f("txtAfterSorting/QuickSort.txt");
+  for(int i = 0; i < num; i++)
+    f << data[i] << "\n";
   return data;
 }
  

@@ -4,6 +4,7 @@
 #include <chrono>
 #include <stdlib.h>
 #include <string.h>
+#include <fstream>
 
 #include "SelectionSort.cpp"
 #include "BubbleSort.cpp"
@@ -15,19 +16,25 @@ std::mutex mu;
 
 string number_converter(long int m_number){
         string number;
-        if (m_number < 1000000){
+        m_number = abs(m_number);
+        if (m_number < 1000){
                 number = std::to_string(m_number);
-                number += " ns";
+                number += " nano-seconds";
         }
-        else if (m_number < 10000000){
-                m_number /= 1000000;
+        else if (m_number >= 1000 && m_number < 1000000){
+                m_number /= 1000;
                 number = std::to_string(m_number);
-                number += " ms";
+                number += " micro-seconds";
+        }
+        else if (m_number >= 1000000 && m_number < 1000000000) {
+                m_number/=1000000;
+                number = std::to_string(m_number);
+                number += " milly-seconds";
         }
         else {
-                m_number/=10000000;
+                m_number/=1000000000;
                 number = std::to_string(m_number);
-                number += " ms";
+                number += " seconds";
         }
         return number;
 }
@@ -35,33 +42,36 @@ string number_converter(long int m_number){
 void BubbleSortThread(int num, BubbleSort * bub_sort, double * data) { 
         int start, end, time;
         data = bub_sort->AlgSort(data, num);
+        string time_str = number_converter(bub_sort->getSortTime());
         mu.lock();
         std::cout << "Bubble sort\n";  
-        std::cout << "\t|----> time "  << bub_sort->getSortTime() << "\n"; 
-        std::cout << "\t|----> iterations "  << bub_sort->getIterationCount() << "\n"; 
-        std::cout << "\t|----> transpositions "  << bub_sort->getTranspositionCount() << "\n\n"; 
+        std::cout << "\t|----> time: "  << time_str << "\n"; 
+        std::cout << "\t|----> iterations: "  << bub_sort->getIterationCount() << "\n"; 
+        std::cout << "\t|----> transpositions: "  << bub_sort->getTranspositionCount() << "\n\n"; 
         mu.unlock();
 } 
 
 void InsertionSortThread(int num, InsertionSort * ins_sort, double * data) { 
         int start, end, time;
         data = ins_sort->AlgSort(data, num);
+        string time_str = number_converter(ins_sort->getSortTime());
         mu.lock();
         std::cout << "Insertion sort\n";  
-        std::cout << "\t|----> time "  << ins_sort->getSortTime() << "\n"; 
-        std::cout << "\t|----> iterations "  << ins_sort->getIterationCount() << "\n"; 
-        std::cout << "\t|----> transpositions "  << ins_sort->getTranspositionCount() << "\n\n"; 
+        std::cout << "\t|----> time: "  << time_str << "\n"; 
+        std::cout << "\t|----> iterations: "  << ins_sort->getIterationCount() << "\n"; 
+        std::cout << "\t|----> transpositions: "  << ins_sort->getTranspositionCount() << "\n\n"; 
         mu.unlock();
 } 
 
 void SelectionSortThread(int num, SelectionSort * sel_sort, double * data) { 
         int start, end, time;
         data = sel_sort->AlgSort(data, num);
+        string time_str = number_converter(sel_sort->getSortTime());
         mu.lock();
         std::cout << "Selection sort\n";  
-        std::cout << "\t|----> time "  << sel_sort->getSortTime() << "\n"; 
-        std::cout << "\t|----> iterations "  << sel_sort->getIterationCount() << "\n"; 
-        std::cout << "\t|----> transpositions "  << sel_sort->getTranspositionCount() << "\n\n";  
+        std::cout << "\t|----> time: "  << time_str << "\n"; 
+        std::cout << "\t|----> iterations: "  << sel_sort->getIterationCount() << "\n"; 
+        std::cout << "\t|----> transpositions: "  << sel_sort->getTranspositionCount() << "\n\n";  
         mu.unlock();
 } 
 
@@ -69,22 +79,27 @@ void QuickSortThread(int num, QuickSort * quick_sort, double * data){
         int start, end, time;
         data = quick_sort->AlgSort(data, num);
         time = quick_sort->getSortTime();
+        string time_str = number_converter(quick_sort->getSortTime());
         mu.lock();
         std::cout << "Quick sort\n";  
-        std::cout << "\t|----> time "  << quick_sort->getSortTime() << "\n"; 
-        std::cout << "\t|----> iterations "  << quick_sort->getIterationCount() << "\n"; 
-        std::cout << "\t|----> transpositions "  << quick_sort->getTranspositionCount() << "\n\n";  
+        std::cout << "\t|----> time: "  << time_str << "\n"; 
+        std::cout << "\t|----> iterations: "  << quick_sort->getIterationCount() << "\n"; 
+        std::cout << "\t|----> transpositions: "  << quick_sort->getTranspositionCount() << "\n\n";  
         mu.unlock();
 }
 
 void MergeSortThread(int num, MergeSort * merge_sort, double * data){
         int start, end, time;
         data = merge_sort->AlgSort(data, num);
+        ofstream f("txtAfterSorting/MergeSort.txt");
+        for(int i = 0; i < num; i++)
+                f << data[i] << "\n";
+        string time_str = number_converter(merge_sort->getSortTime());
         mu.lock();
         std::cout << "Merge sort\n";  
-        std::cout << "\t|----> time "  << merge_sort->getSortTime() << "\n"; 
-        std::cout << "\t|----> iterations "  << merge_sort->getIterationCount() << "\n"; 
-        std::cout << "\t|----> transpositions "  << merge_sort->getTranspositionCount() << "\n\n";  
+        std::cout << "\t|----> time: "  << time_str << "\n"; 
+        std::cout << "\t|----> iterations: "  << merge_sort->getIterationCount() << "\n"; 
+        std::cout << "\t|----> transpositions: "  << merge_sort->getTranspositionCount() << "\n\n";  
         mu.unlock();
 }
 
@@ -93,13 +108,13 @@ int main(){
     int num, start, end, choise, time;
     bool status;
     string data_name="empty now :)";
+    string time_str;
     double *data;
 
     while(!status){
         std::cout << "<~~~~~~~~~~Main menu~~~~~~~~~~>" << "\t\t\tStatus\n";
-        std::cout << "<1-Create new file for sorting>" << "\t\tCurrent file is " << data_name << "\n";;
-        std::cout << "<2-Open file from folder>\n";
-        std::cout << "<3-Going to sort!>\n";
+        std::cout << "<1-Create new file for sorting>" << "\t\tCurrent file is " << data_name << "\n";
+        std::cout << "<2-Going to sort!>\n";
         std::cout << "<0-Quit program>\n";
         std::cout << "----> ";
         std::cin >> choise;
@@ -169,7 +184,7 @@ int main(){
                 }
                 break;
         }
-        case 3:{
+        case 2:{
                 system("cls");
                 if (data_name != "empty now :)"){
                         std::cout << "<~~~~~~~~~~Sort menu~~~~~~~~~~>\n";
@@ -191,11 +206,10 @@ int main(){
                         case 1:{
                                 system("cls");
                                 char choise_c;
-                                string time_str;
                                 BubbleSort *bub_sort = new BubbleSort();
                                 data = bub_sort->AlgSort(data, num);
                                 time_str = number_converter(bub_sort->getSortTime());
-                                std::cout << "Bubble sorting time:   "  << time_str << " ns\n"; 
+                                std::cout << "Bubble sorting time:   "  << time_str << "\n"; 
                                 std::cout << "Number of iterations: " << bub_sort->getIterationCount() << "\n";
                                 std::cout << "Number of transpositions: " << bub_sort->getTranspositionCount() << "\n";
                                 std::cout << "Do u want see array after sorting?(y/n): ";
@@ -214,8 +228,8 @@ int main(){
                                 char choise_c;
                                 SelectionSort *sel_sort = new SelectionSort();
                                 data = sel_sort->AlgSort(data, num);
-                                time = sel_sort->getSortTime();
-                                std::cout << "Selection sorting time:   "  << sel_sort->getSortTime() << " ns\n"; 
+                                time_str = number_converter(sel_sort->getSortTime());
+                                std::cout << "Selection sorting time:   "  << time_str << "\n"; 
                                 std::cout << "Number of iterations: " << sel_sort->getIterationCount() << "\n";
                                 std::cout << "Number of transpositions: " << sel_sort->getTranspositionCount() << "\n";
                                 std::cout << "Do u want see array after sorting?(y/n): ";
@@ -234,8 +248,8 @@ int main(){
                                 char choise_c;
                                 InsertionSort *ins_sort = new InsertionSort();
                                 data = ins_sort->AlgSort(data, num);
-                                time = ins_sort->getSortTime();
-                                std::cout << "Insertion sorting time:   "  << ins_sort->getSortTime() << " ns\n"; 
+                                time_str = number_converter(ins_sort->getSortTime());
+                                std::cout << "Insertion sorting time:   "  << time_str << "\n"; 
                                 std::cout << "Number of iterations: " << ins_sort->getIterationCount() << "\n";
                                 std::cout << "Number of transpositions: " << ins_sort->getTranspositionCount() << "\n";
                                 std::cout << "Do u want see array after sorting?(y/n): ";
@@ -254,8 +268,8 @@ int main(){
                                 char choise_c;
                                 QuickSort *quick_sort = new QuickSort();
                                 data = quick_sort->AlgSort(data, num);
-                                time = quick_sort->getSortTime();
-                                std::cout << "Quick sorting time:   "  << quick_sort->getSortTime() << " ns\n"; 
+                                time_str = number_converter(quick_sort->getSortTime());
+                                std::cout << "Quick sorting time:   "  << time_str << "\n"; 
                                 std::cout << "Number of iterations: " << quick_sort->getIterationCount() << "\n";
                                 std::cout << "Number of transpositions: " << quick_sort->getTranspositionCount() << "\n";
                                 std::cout << "Do u want see array after sorting?(y/n): ";
@@ -274,8 +288,11 @@ int main(){
                                 char choise_c;
                                 MergeSort *merge_sort = new MergeSort();
                                 data = merge_sort->AlgSort(data, num);
-                                time = merge_sort->getSortTime();
-                                std::cout << "Merge sorting time:   "  << merge_sort->getSortTime() << " ns\n"; 
+                                ofstream f("txtAfterSorting/MergeSort.txt");
+                                for(int i = 0; i < num; i++)
+                                        f << data[i] << "\n";
+                                time_str = number_converter(merge_sort->getSortTime());
+                                std::cout << "Merge sorting time:   "  << time_str << "\n"; 
                                 std::cout << "Number of iterations: " << merge_sort->getIterationCount() << "\n";
                                 std::cout << "Number of transpositions: " << merge_sort->getTranspositionCount() << "\n";
                                 std::cout << "Do u want see array after sorting?(y/n): ";
