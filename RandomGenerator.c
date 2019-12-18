@@ -4,7 +4,7 @@
 using namespace std;
 int main()
 {
-    fstream fs("1.txt");
+    fstream fs("RandomNumbers.txt");
     if (!fs)
     {
         cout << "File not found\n";

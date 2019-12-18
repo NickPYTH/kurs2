@@ -14,7 +14,7 @@
 
 std::mutex mu;
 
-string number_converter(long int m_number){
+string number_converter(long int m_number){ // todo double
         string number;
         m_number = abs(m_number);
         if (m_number < 1000){
@@ -39,70 +39,6 @@ string number_converter(long int m_number){
         return number;
 }
 
-void BubbleSortThread(int num, BubbleSort * bub_sort, double * data) { 
-        int start, end, time;
-        data = bub_sort->AlgSort(data, num);
-        string time_str = number_converter(bub_sort->getSortTime());
-        mu.lock();
-        std::cout << "Bubble sort\n";  
-        std::cout << "\t|----> time: "  << time_str << "\n"; 
-        std::cout << "\t|----> iterations: "  << bub_sort->getIterationCount() << "\n"; 
-        std::cout << "\t|----> transpositions: "  << bub_sort->getTranspositionCount() << "\n\n"; 
-        mu.unlock();
-} 
-
-void InsertionSortThread(int num, InsertionSort * ins_sort, double * data) { 
-        int start, end, time;
-        data = ins_sort->AlgSort(data, num);
-        string time_str = number_converter(ins_sort->getSortTime());
-        mu.lock();
-        std::cout << "Insertion sort\n";  
-        std::cout << "\t|----> time: "  << time_str << "\n"; 
-        std::cout << "\t|----> iterations: "  << ins_sort->getIterationCount() << "\n"; 
-        std::cout << "\t|----> transpositions: "  << ins_sort->getTranspositionCount() << "\n\n"; 
-        mu.unlock();
-} 
-
-void SelectionSortThread(int num, SelectionSort * sel_sort, double * data) { 
-        int start, end, time;
-        data = sel_sort->AlgSort(data, num);
-        string time_str = number_converter(sel_sort->getSortTime());
-        mu.lock();
-        std::cout << "Selection sort\n";  
-        std::cout << "\t|----> time: "  << time_str << "\n"; 
-        std::cout << "\t|----> iterations: "  << sel_sort->getIterationCount() << "\n"; 
-        std::cout << "\t|----> transpositions: "  << sel_sort->getTranspositionCount() << "\n\n";  
-        mu.unlock();
-} 
-
-void QuickSortThread(int num, QuickSort * quick_sort, double * data){
-        int start, end, time;
-        data = quick_sort->AlgSort(data, num);
-        time = quick_sort->getSortTime();
-        string time_str = number_converter(quick_sort->getSortTime());
-        mu.lock();
-        std::cout << "Quick sort\n";  
-        std::cout << "\t|----> time: "  << time_str << "\n"; 
-        std::cout << "\t|----> iterations: "  << quick_sort->getIterationCount() << "\n"; 
-        std::cout << "\t|----> transpositions: "  << quick_sort->getTranspositionCount() << "\n\n";  
-        mu.unlock();
-}
-
-void MergeSortThread(int num, MergeSort * merge_sort, double * data){
-        int start, end, time;
-        data = merge_sort->AlgSort(data, num);
-        ofstream f("txtAfterSorting/MergeSort.txt");
-        for(int i = 0; i < num; i++)
-                f << data[i] << "\n";
-        string time_str = number_converter(merge_sort->getSortTime());
-        mu.lock();
-        std::cout << "Merge sort\n";  
-        std::cout << "\t|----> time: "  << time_str << "\n"; 
-        std::cout << "\t|----> iterations: "  << merge_sort->getIterationCount() << "\n"; 
-        std::cout << "\t|----> transpositions: "  << merge_sort->getTranspositionCount() << "\n\n";  
-        mu.unlock();
-}
-
 int main(){
     system("cls");
     int num, start, end, choise, time;
@@ -118,7 +54,9 @@ int main(){
         std::cout << "<0-Quit program>\n";
         std::cout << "----> ";
         std::cin >> choise;
-
+        //todo rus
+        //name==filename
+        //не удалять файлы
         switch (choise)
         {
         case 0:
@@ -154,6 +92,7 @@ int main(){
                                 std::cout << "Enter max----> "; // на разных выборках упоряд ж обратно упоряд ж хаотично ж одинаковые значения
                                 std::cin >> end;
                                 data = new double[num];
+                                //todo создавать массив внутри генератора
                                 RandomGenerator *rand = new RandomGenerator(num, start, end, data);
                                 data = rand->getRandArray();
                                 data_name = "*"+data_name+"*";
@@ -313,16 +252,10 @@ int main(){
                                 InsertionSort *ins_sort = new InsertionSort();
                                 QuickSort *quick_sort = new QuickSort();
                                 MergeSort *merge_sort = new MergeSort();
-                                thread bubleSort_thread(BubbleSortThread, num, bub_sort, data);
-                                bubleSort_thread.detach();
-                                thread insertionSort_thread(InsertionSortThread, num, ins_sort, data);
-                                insertionSort_thread.detach();
-                                thread selectionSort_thread(SelectionSortThread, num, sel_sort, data);
-                                selectionSort_thread.detach();
-                                thread mergeSort_thread(MergeSortThread, num, merge_sort, data);
-                                mergeSort_thread.detach();
-                                thread quickSort_thread(QuickSortThread, num, quick_sort, data);
-                                quickSort_thread.detach();
+                                bub_sort->AlgSort(data, num);
+                                string time;
+                                time = number_converter(bub_sort->getSortTime());
+                                cout << time << endl;
                                 getchar();getchar();
                                 system("cls");
                                 data_name = "empty now :)";
